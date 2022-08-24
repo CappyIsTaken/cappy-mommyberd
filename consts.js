@@ -104,8 +104,7 @@ let distube = new DisTube(client, {
     leaveOnEmpty: true,
     leaveOnFinish: false,
     leaveOnStop: false,
-    plugins: [new YtDlpPlugin(), new SpotifyPlugin()],
-    youtubeDL: false
+    plugins: [new YtDlpPlugin(), new SpotifyPlugin()]
 })
 exports.distube = distube
 

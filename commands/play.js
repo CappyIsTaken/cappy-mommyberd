@@ -1,5 +1,5 @@
 const {Client, Message} = require("discord.js")
-const {client, distube} = require("./consts")
+const {client, distube} = require("../consts")
 
 exports.name = "play"
 exports.aliases = ["p"]

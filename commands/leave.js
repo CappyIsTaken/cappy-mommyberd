@@ -1,6 +1,6 @@
 const {Client, Message} = require("discord.js")
 const utils = require("../util")
-const {client, distube} = require("./consts")
+const {client, distube} = require("../consts")
 
 
 exports.name = "leave"

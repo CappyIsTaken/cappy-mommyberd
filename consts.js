@@ -5,7 +5,7 @@ const { SpotifyPlugin } = require('@distube/spotify')
 const { YtDlpPlugin } = require("@distube/yt-dlp")
 const { DisTube } = require('distube')
 
-exports.client = new Client({
+let client = new Client({
     intents: [
         "GuildMessages",
         "GuildMessageTyping",
@@ -15,7 +15,10 @@ exports.client = new Client({
         "GuildMembers"
     ],
 })
-exports.client.commands = new Collection()
+
+
+exports.client = client
+client.commands = new Collection()
 exports.setupCommands = () => {
     const commands = fs.readdirSync("./commands").filter(file => file.endsWith(".js"))
     for(const commandFile of commands) {
@@ -94,8 +97,7 @@ client.on('messageCreate', async message => {
     }
 })
 
-
-exports.distube = new DisTube(client, {
+let distube = new DisTube(client, {
     searchSongs: 5,
     searchCooldown: 30,
     leaveOnEmpty: true,
@@ -104,6 +106,7 @@ exports.distube = new DisTube(client, {
     plugins: [new YtDlpPlugin(), new SpotifyPlugin()],
     youtubeDL: false
 })
+exports.distube = distube
 
 
 

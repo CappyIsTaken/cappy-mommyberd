@@ -8,9 +8,6 @@ app.get("/", (req, res) => {
     res.send("HELLO!!!")
 })
 
-exports = app
-
-
-
+app.listen(process.env.PORT || 3000)
 client.login(process.env.TOKEN)
 

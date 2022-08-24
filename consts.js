@@ -1,14 +1,19 @@
 const {Client, Intents, Collection} = require('discord.js')
 const fs = require("fs")
-const myIntents = new Intents();
-myIntents.add(Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_VOICE_STATES);
 const { SoundCloudPlugin } = require('@distube/soundcloud')
 const { SpotifyPlugin } = require('@distube/spotify')
 const { YtDlpPlugin } = require("@distube/yt-dlp")
 const { DisTube } = require('distube')
 
 exports.client = new Client({
-    intents: myIntents,
+    intents: [
+        "GuildMessages",
+        "GuildMessageTyping",
+        "GuildMessageReactions",
+        "Guilds",
+        "MessageContent",
+        "GuildMembers"
+    ],
 })
 client.commands = new Collection()
 exports.setupCommands = () => {

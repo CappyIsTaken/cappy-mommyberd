@@ -15,7 +15,7 @@ exports.client = new Client({
         "GuildMembers"
     ],
 })
-client.commands = new Collection()
+exports.client.commands = new Collection()
 exports.setupCommands = () => {
     const commands = fs.readdirSync("./commands").filter(file => file.endsWith(".js"))
     for(const commandFile of commands) {

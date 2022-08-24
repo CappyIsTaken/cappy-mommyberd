@@ -1,4 +1,4 @@
-const {Client, Intents, Collection} = require('discord.js')
+const {Client, GatewayIntentBits, Collection} = require('discord.js')
 const fs = require("fs")
 const { SoundCloudPlugin } = require('@distube/soundcloud')
 const { SpotifyPlugin } = require('@distube/spotify')
@@ -7,13 +7,11 @@ const { DisTube } = require('distube')
 
 let client = new Client({
     intents: [
-        "GuildMessages",
-        "GuildMessageTyping",
-        "GuildMessageReactions",
-        "Guilds",
-        "MessageContent",
-        "GuildMembers",
-        "GuildVoiceStates"
+       GatewayIntentBits.GuildMessages,
+       GatewayIntentBits.GuildVoiceStates,
+       GatewayIntentBits.GuildMembers,
+       GatewayIntentBits.Guilds,
+       GatewayIntentBits.MessageContent
     ],
 })
 

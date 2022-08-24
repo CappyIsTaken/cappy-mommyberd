@@ -12,4 +12,4 @@ app.get("/", (req, res) => {
     setupCommands()
     app.listen(process.env.PORT || 3000)
 
-})
+})()

@@ -11,7 +11,7 @@ let client = new Client({
        GatewayIntentBits.GuildVoiceStates,
        GatewayIntentBits.GuildMembers,
        GatewayIntentBits.Guilds,
-       GatewayIntentBits.MessageContent
+       GatewayIntentBits.GuildMessageTyping,
     ],
 })
 

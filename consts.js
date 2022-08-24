@@ -7,11 +7,11 @@ const { SpotifyPlugin } = require('@distube/spotify')
 const { YtDlpPlugin } = require("@distube/yt-dlp")
 const { DisTube } = require('distube')
 
-export const client = new Client({
+exports.client = new Client({
     intents: myIntents,
 })
 client.commands = new Collection()
-export function setupCommands() {
+exports.setupCommands = () => {
     const commands = fs.readdirSync("./commands").filter(file => file.endsWith(".js"))
     for(const commandFile of commands) {
         const command = require(`./commands/${commandFile}`)
@@ -90,7 +90,7 @@ client.on('messageCreate', async message => {
 })
 
 
-export const distube = new DisTube(client, {
+exports.distube = new DisTube(client, {
     searchSongs: 5,
     searchCooldown: 30,
     leaveOnEmpty: true,

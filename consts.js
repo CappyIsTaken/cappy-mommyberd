@@ -12,7 +12,8 @@ let client = new Client({
         "GuildMessageReactions",
         "Guilds",
         "MessageContent",
-        "GuildMembers"
+        "GuildMembers",
+        "GuildVoiceStates"
     ],
 })
 

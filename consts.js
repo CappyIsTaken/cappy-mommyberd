@@ -1,9 +1,9 @@
-const {Client, GatewayIntentBits, Collection} = require('discord.js')
+const {Client, GatewayIntentBits, Collection, Utils} = require('discord.js')
 const fs = require("fs")
 const { SoundCloudPlugin } = require('@distube/soundcloud')
 const { SpotifyPlugin } = require('@distube/spotify')
 const { YtDlpPlugin } = require("@distube/yt-dlp")
-const { DisTube } = require('distube')
+const { DisTube, Queue } = require('distube')
 
 let client = new Client({
     intents: [
@@ -12,6 +12,7 @@ let client = new Client({
        GatewayIntentBits.GuildMembers,
        GatewayIntentBits.Guilds,
        GatewayIntentBits.GuildMessageTyping,
+       GatewayIntentBits.MessageContent
     ],
 })
 
@@ -24,8 +25,10 @@ exports.setupCommands = () => {
         const command = require(`./commands/${commandFile}`)
         console.log(`Attempting to init: ${commandFile}`)
         client.commands.set(command.name, command)
+        console.log(`Added ${command.name} to the command list!`)
         for(const alias of command.aliases) {
             client.commands.set(alias, command)
+            console.log(`Added ${alias} as ${command.name} to the command list!`)
         }
     }
 }
@@ -38,11 +41,27 @@ client.on('ready', client => {
 
 client.on('messageCreate', async message => {
     if (message.author.bot || !message.inGuild()) return
-  if(isMentionCommand(message) && message.content.includes("https://twitter.com"))
-  {
-    let url = message.content.match(/(^|[^'"])(https?:\/\/twitter\.com\/(?:#!\/)?(\w+)\/status(?:es)?\/(\d+))/)[2];
-    let additional = message.content.replace(url, "")
-    let id = url.split("/status/")[1]
+  let args
+  let commandName
+    if (message.content.startsWith(process.env.prefix)) {
+         args = message.content
+        .slice(process.env.prefix.length)
+        .trim()
+        .split(/ +/g)
+          
+    }
+    else if(this.isMentionCommand(message)) {
+        args = message.content.slice(this.getMentionBot().length).trim().split(/ +/g)
+    }
+    else {
+        return
+    }
+    commandName = args.shift().toLowerCase()
+    let twitterCheck = commandName.match(/(^|[^'"])(https?:\/\/twitter\.com\/(?:#!\/)?(\w+)\/status(?:es)?\/(\d+))/)
+    const cmd = client.commands.get(commandName)
+    if(twitterCheck != null && twitterCheck.length > 0) {
+
+        let id = twitterCheck.at(4)
   try{
       let resp = await fetch(`https://cdn.syndication.twimg.com/tweet?id=${id}`)
     let data = await resp.json();
@@ -53,47 +72,17 @@ client.on('messageCreate', async message => {
         let res2 = b.src.substring(b.src.indexOf("x", 26)+1, b.src.lastIndexOf("/"))
         return parseInt(res2)-parseInt(res1)
       })
-      await message.channel.send(sorted[0].src+`\n[Posted by ${message.author}]\n[Original tweet: ${url}]`)
+      await message.channel.send(sorted[0].src+`\n[Posted by ${message.author}]\n[Original tweet: ${commandName}]\n${args.length > 0 ? `[Additional body: ${args.join(" ")}]` : ""}`)
       await message.delete()
     }
   }catch(ex){
-      console.log('Fail', ex);
+      if(ex.method == "DELETE" && ex.url.includes("messages")) {
+        message.channel.send("Can't delete the original message!")
+      }
   }
-    
-  }
-  let args
-  let commandName
-    if (message.content.startsWith(process.env.prefix)) {
-         args = message.content
-        .slice(process.env.prefix.length)
-        .trim()
-        .split(/ +/g)
-          
     }
-    else if(isMentionCommand(message)) {
-        args = message.content.slice(getMentionBot().length).trim().split(/ +/g)
-    }
-    else {
-        return
-    }
-    commandName = args.shift().toLowerCase()
-    const cmd = client.commands.get(commandName)
     if(!cmd) return
-    cmd.run(message, args)
-
-
-    if (
-        exists(command, distube.filters)
-    ) {
-      if(!isInBotVC(message)) {
-          message.channel.send("You aren't in the same voice channel as the bot!")
-          return
-        } 
-        const filter = distube.setFilter(message, command)
-        message.channel.send(
-            `Current queue filter: ${filter.join(', ') || 'Off'}`,
-        )
-    }
+    await cmd.run(message, args)
 })
 
 let distube = new DisTube(client, {
@@ -105,6 +94,27 @@ let distube = new DisTube(client, {
     plugins: [new YtDlpPlugin(), new SpotifyPlugin()]
 })
 exports.distube = distube
+
+
+exports.isInBotVC = (message) => {
+    const authorVC = message.member?.voice?.channelId
+    const botVC = distube.voices.get(message).voiceState?.channelId
+    return (authorVC != null && botVC != null) && (authorVC == botVC)
+}
+  
+  
+  
+exports.getMentionBot = () => {
+      return "<@"+client.user.id+">"
+  }
+  
+exports.exists = (key, obj) => {
+      return Object.keys(obj).includes(key)
+  }
+  
+exports.isMentionCommand = (message) => {
+      return message.content.startsWith(this.getMentionBot())
+  }
 
 
 
@@ -151,10 +161,11 @@ distube
     .on('disconnect', queue =>
         queue.textChannel?.send('Left channel!'),
     )
-    .on('empty', queue =>
+    .on("empty", queue =>
         queue.textChannel?.send(
-            'The voice channel is empty! Leaving the voice channel...',
-        ),
+            'The voice channel is empty! Leaving the voice channel...'
+        )
+    
     )
     // DisTubeOptions.searchSongs > 1
     .on('searchResult', (message, result) => {

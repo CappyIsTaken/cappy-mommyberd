@@ -4,6 +4,8 @@ const { SoundCloudPlugin } = require('@distube/soundcloud')
 const { SpotifyPlugin } = require('@distube/spotify')
 const { YtDlpPlugin } = require("@distube/yt-dlp")
 const { DisTube, Queue } = require('distube')
+const {createClient} = require("@supabase/supabase-js")
+require("dotenv").config()
 
 let client = new Client({
     intents: [
@@ -12,9 +14,16 @@ let client = new Client({
        GatewayIntentBits.GuildMembers,
        GatewayIntentBits.Guilds,
        GatewayIntentBits.GuildMessageTyping,
-       GatewayIntentBits.MessageContent
+       GatewayIntentBits.MessageContent,
+       GatewayIntentBits.DirectMessages
     ],
 })
+
+
+
+
+
+
 
 
 exports.client = client
@@ -194,7 +203,4 @@ distube
     )
     .on('searchDone', () => {})
 
-
-
-
-
+exports.supabaseClient = createClient("https://yxhtmjdsrrynfpvngbet.supabase.co", process.env.SUPABASE_KEY)

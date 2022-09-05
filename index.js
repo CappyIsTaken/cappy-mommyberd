@@ -21,8 +21,7 @@ app.listen(process.env.PORT || 3000, async () => {
     cron.schedule("0 4 * * *", async () => {
         console.log("starting cron job!")
         const ids = await utils.getDiscordIds()
-        const me = await client.users.fetch("279956479140954113")
-        console.log(ids)
+        const me = await client.users.fetch("279956479140954113", false)
         ids.forEach(async id => {
             console.log("Now doing this account! " + id)
             const accLogin = await utils.loginToFortnite(id)
@@ -30,14 +29,15 @@ app.listen(process.env.PORT || 3000, async () => {
             const user = await client.users.fetch(id, false)
             if(claimResp.items.length > 0) {
                 const reward = claimResp.items[0]
-                await user.send(`Hello there, ${user.tag}!\nToday you got: ${reward.quantity}x ${reward.itemType}`)
-                await me.send(`${accLogin.displayName} got today: ${reward.quantity}x ${reward.itemType}`)
+                const displayName = await utils.getDisplayName(rewar)
+                await user.send(`Hello there, ${user}!\nToday you got: ${reward.quantity}x ${displayName}`)
+                await me.send(`${accLogin.displayName} got today: ${reward.quantity}x ${displayName}`)
             }
         })
             
         }, {
             timezone: "Asia/Jerusalem"
         })
-    })
+})
 
 

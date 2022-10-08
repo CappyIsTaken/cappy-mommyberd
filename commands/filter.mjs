@@ -1,12 +1,11 @@
-const {Client, Message} = require("discord.js")
-const {client, distube, isInBotVC, exists} = require("../consts")
+import {Client, Message, MessageMentions, MessageCollector} from "discord.js"
+import {client, distube, isInBotVC, exists} from "../consts.mjs"
 
+export let name = "filter"
+export let aliases = []
+export let inVoiceChannel = true
 
-exports.name = "filter"
-exports.aliases = []
-exports.inVoiceChannel = true
-
-exports.run = async (message, args) => {
+export let run = async (message, args) => {
     let queue = distube.getQueue(message)
     if(!queue) {
       message.channel.send("Nothing is playing!")

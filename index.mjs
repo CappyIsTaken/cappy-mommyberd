@@ -1,9 +1,8 @@
-const { client, distube, setupCommands } = require("./consts")
-const express = require("express")
-require("dotenv").config()
-const cron = require("node-cron")
-const utils = require("./util")
-const fs = require("fs")
+import { client, distube, setupCommands } from "./consts.mjs"
+import express from "express"
+import {config} from "dotenv"
+import cron from "node-cron"
+import * as utils from "./util.mjs"
 
 
 

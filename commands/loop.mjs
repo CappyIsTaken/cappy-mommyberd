@@ -1,12 +1,11 @@
-const {Client, Message} = require("discord.js")
-const utils = require("../util")
-const {client, distube, isInBotVC} = require("../consts")
+import {Client, Message, MessageMentions, MessageCollector} from "discord.js"
+import {client, distube, isInBotVC} from "../consts.mjs"
 
 
-exports.name = "loop"
-exports.aliases = ["repeat"]
-exports.inVoiceChannel = true
-exports.run = async (message, args) => {
+export let name = "loop"
+export let aliases = ["repeat"]
+export let inVoiceChannel = true
+export let run = async (message, args) => {
     if(!isInBotVC(message)) {
         message.channel.send("You aren't in the same voice channel as the bot!")
         return

@@ -3,7 +3,7 @@ export let getTiktokVideoID = async(tiktokURL) => {
       let data = await fetch(tiktokURL, {
         method: "HEAD"
       })
-      return await this.getTiktokVideoID(data.url)
+      return await getTiktokVideoID(data.url)
     }
     const basicReg = /tiktok\.com(.*)\/video\/(\d+)/gm;
     const basicParsed = basicReg.exec(tiktokURL);
@@ -22,7 +22,7 @@ export let shortenURL = async(url) => {
 
 export let getTikTokVideoURL = async (tiktokURL) => {
     
-    const videoId = await this.getTiktokVideoID(tiktokURL)
+    const videoId = await getTiktokVideoID(tiktokURL)
     if(videoId == undefined) return undefined
     const videoData = await fetch(`https://m.tiktok.com/api/item/detail/?agent_user=&itemId=${videoId}`, {
       method: "GET",

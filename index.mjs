@@ -1,4 +1,4 @@
-import { client, distube, setupCommands } from "./consts.mjs"
+import { client, distube, setupCommands, setupHandlers } from "./consts.mjs"
 import express from "express"
 import {config} from "dotenv"
 import cron from "node-cron"
@@ -16,7 +16,8 @@ app.get("/", (req, res) => {
 
 app.listen(process.env.PORT || 3000, async () => {
   await client.login(process.env.TOKEN)
-  setupCommands()
+  await setupCommands()
+  await setupHandlers()
   cron.schedule("0 4 * * *", async () => {
     console.log("starting cron job!")
     const ids = await utils.getDiscordIds()
